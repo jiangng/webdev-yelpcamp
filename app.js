@@ -16,17 +16,13 @@ var indexRoutes = require("./routes/index"),
 	campgroundRoutes = require("./routes/campgrounds"),
 	commentRoutes = require("./routes/comments");
 
-//local mongoDB
+//Make use of environment variable to set the database, either dev (local db) or production (cloud db)
+mongoose.connect(process.env.DATABASEURL, {useNewUrlParser: true});
 //mongoose.connect("mongodb://localhost/yelp_camp", {useNewUrlParser: true});
-//hosted mongoDB
-mongoose.connect('mongodb+srv://jiang:7xr6HHjLLpN-ZEG@cluster0-3bmps.mongodb.net/test?retryWrites=true&w=majority', {
-	useNewUrlParser: true, 
-	useCreateIndex: true
-}).then(() => {
-	console.log("Connected to DB.");
-}).catch(err => {
-	console.log('Error:', err.message);
-});
+// mongoose.connect('mongodb+srv://jiang:7xr6HHjLLpN-ZEG@cluster0-3bmps.mongodb.net/test?retryWrites=true&w=majority', {
+// 	useNewUrlParser: true, 
+// 	useCreateIndex: true
+// });
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
