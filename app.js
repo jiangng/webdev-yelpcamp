@@ -17,7 +17,11 @@ var indexRoutes = require("./routes/index"),
 	commentRoutes = require("./routes/comments");
 
 //Make use of environment variable to set the database, either dev (local db) or production (cloud db)
-mongoose.connect(process.env.DATABASEURL, {useNewUrlParser: true});
+var url = process.env.DATABASEURL || "mongodb://localhost/yelp_camp";
+mongoose.connect(url, {
+	useNewUrlParser: true,
+	useCreateIndex: true
+});
 //mongoose.connect("mongodb://localhost/yelp_camp", {useNewUrlParser: true});
 // mongoose.connect('mongodb+srv://jiang:7xr6HHjLLpN-ZEG@cluster0-3bmps.mongodb.net/test?retryWrites=true&w=majority', {
 // 	useNewUrlParser: true, 
@@ -29,6 +33,8 @@ app.use(methodOverride("_method"));
 app.use(flash());
 app.set("view engine", "ejs");
 //seedDB();
+
+app.locals.moment = require('moment');
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
