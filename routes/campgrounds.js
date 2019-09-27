@@ -91,25 +91,26 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, function(req, res) 
 
 // UPDATE CAMPGROUND ROUTE
 router.put("/:id", middleware.checkCampgroundOwnership, function(req, res){
-  geocoder.geocode(req.body.location, function (err, data) {
-    if (err || !data.length) {
-      req.flash('error', 'Invalid address');
-      return res.redirect('back');
-    }
-    req.body.campground.lat = data[0].latitude;
-    req.body.campground.lng = data[0].longitude;
-    req.body.campground.location = data[0].formattedAddress;
+	//Cam be optimised: if location unchanged, skip this step
+	geocoder.geocode(req.body.location, function (err, data) {
+		if (err || !data.length) {
+			req.flash('error', 'Invalid address');
+			return res.redirect('back');
+		}
+		req.body.campground.lat = data[0].latitude;
+		req.body.campground.lng = data[0].longitude;
+		req.body.campground.location = data[0].formattedAddress;
 
-    Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, campground){
-        if(err){
-            req.flash("error", err.message);
-            res.redirect("back");
-        } else {
-            req.flash("success","Successfully Updated!");
-            res.redirect("/campgrounds/" + campground._id);
-        }
-    });
-  });
+		Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, campground){
+			if(err){
+				req.flash("error", err.message);
+				res.redirect("back");
+			} else {
+				req.flash("success","Successfully Updated!");
+				res.redirect("/campgrounds/" + campground._id);
+			}
+		});
+	});
 });
 
 //DELETE route
