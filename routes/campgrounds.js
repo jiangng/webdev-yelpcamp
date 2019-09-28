@@ -122,6 +122,7 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function(req, res) {
 		} else {
 			//campground is a query object, which has deleteOne() method
 			campground.deleteOne();
+			req.flash("error","Site Deleted!");
 		}
 		res.redirect("/campgrounds");
 	})
