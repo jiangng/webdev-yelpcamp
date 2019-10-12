@@ -13,6 +13,24 @@
 </header>	
 
 <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+	<div class="col-md-12">
+		<p>
+			<form action="/campgrounds" method="GET" class="form-inline">
+				<div class="form-group">
+					<input type="text" name="search" id="searchBar" value="<%= searchTerm %>" placeholder="Campground search..." class="form-control">
+					<input type="submit" value="Search" class="btn btn-default">
+					<% if (searchTerm) { %>
+						<a href="/campgrounds" id="rmFilter" class="btn btn-default">Remove filter</a>
+						<script src="/script/removeFilter.js"></script>
+					<% } %>
+				</div>
+			</form>
+		</p>
+		<% if (campgrounds.length < 1) { %>
+			<h3>No campgrounds match that query, please try again.</h3>
+		<% } %>
+	</div>
+	
 	<% campgrounds.forEach(function(campground) { %>
 		<div class="col-md-3 col-sm-6">
 			<div class="thumbnail">
@@ -24,9 +42,10 @@
 					<a href="/campgrounds/<%= campground._id%>" class="btn btn-primary">More Info</a>
 				</p>
 			</div>
-
 		</div>
-	<% }); %>		
+	<% }); %>
 </div>
+
+
 
 <% include ../partials/footer %>
