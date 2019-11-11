@@ -37,9 +37,13 @@ router.post("/register", function(req, res) {
 		email: req.body.email,
 		avatar: req.body.avatar
 	});
-	if (req.body.adminCode === "secretCode123") {
-		newUser.isAdmin = true;
+
+	if (req.body.adminCode === "secretCode123") newUser.isAdmin = true;
+	if (req.body.adminCode && req.body.adminCode !== "secretCode123") {
+		req.flash("error", "Wrong secret code, please try again.");
+		return res.redirect("/register_admin");
 	}
+	
 	User.register(newUser, req.body.password, function(err, user) {
 		if (err) {
 			req.flash("error", err.message);

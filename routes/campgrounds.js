@@ -140,7 +140,7 @@ router.put("/:id", middleware.checkCampgroundOwnership, upload.single('image'), 
 		//Check if there's any file uploaded
 		if (req.file) {
 			try {
-				cloudinary.v2.uploader.destroy(campground.imageId);
+				await cloudinary.v2.uploader.destroy(campground.imageId);
 			    var result = await cloudinary.v2.uploader.upload(req.file.path);
 			    campground.imageId = result.public_id;
 			    campground.image = result.secure_url;
@@ -184,15 +184,21 @@ router.put("/:id", middleware.checkCampgroundOwnership, upload.single('image'), 
 //DELETE route
 router.delete("/:id", middleware.checkCampgroundOwnership, function(req, res) {
 	//Not using findByIdAndRemove due to the pre-hook in campground model
-	Campground.findById(req.params.id, function(err, campground) {
+	Campground.findById(req.params.id, async function(err, campground) {
 		if (err) {
-			console.log(err);
-		} else {
+			req.flash("error", err.message);
+			return res.redirect("back");
+		} 
+		try {
+			await cloudinary.v2.uploader.destroy(campground.imageId);	
 			//campground is a query object, which has deleteOne() method
 			campground.deleteOne();
-			req.flash("error","Site Deleted!");
+			req.flash("success","Site Deleted!");
+			res.redirect("/campgrounds");
+		} catch(err) {
+			req.flash("error", err.message);
+			return res.redirect("back");
 		}
-		res.redirect("/campgrounds");
 	})
 });
 
