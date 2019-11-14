@@ -65,7 +65,7 @@ router.put("/:comment_id", middleware.checkCommentOwnership, function(req, res) 
 		} else {
 			res.redirect("/campgrounds/" + req.params.id);
 		}
-	})
+	});
 })
 
 //COMMENT DESTROY route
@@ -74,8 +74,10 @@ router.delete("/:comment_id", middleware.checkCommentOwnership, function(req, re
 		if (err) {
 			res.redirect("back");
 		} else {
-			req.flash("success", "Comment deleted.");
-			res.redirect("/campgrounds/" + req.params.id);
+			Campground.findByIdAndUpdate(req.params.id, {$pull: {comments: req.params.comment_id}}, function() {
+				req.flash("success", "Comment deleted.");
+				res.redirect("/campgrounds/" + req.params.id);
+			});
 		}
 	});
 });
