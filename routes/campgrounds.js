@@ -1,6 +1,8 @@
 var express = require("express");
 var router = express.Router();
 var Campground = require("../models/campground");
+var Comment = require("../models/comment");
+var Review = require("../models/review");
 var middleware = require("../middleware");
 var NodeGeocoder = require('node-geocoder');
 var multer = require('multer');
@@ -111,7 +113,10 @@ router.get("/new", middleware.isLoggedIn, function(req, res) {
 //SHOW route
 router.get("/:id", function(req, res) {
 	//find the campground with provided id
-	Campground.findById(req.params.id).populate("comments").exec(function(err, foundCampground) {
+	Campground.findById(req.params.id).populate("comments").populate({
+		path: "reviews",
+		options: {sort: {createdAt: -1}}
+	}).exec(function(err, foundCampground) {
 		//If an ID is technically valid but has no associated campground, there's no err hence need to check if foundCampground is defined or not 
 		if (err || !foundCampground) {
 			console.log(err);
@@ -131,6 +136,8 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, function(req, res) 
 
 // UPDATE CAMPGROUND ROUTE
 router.put("/:id", middleware.checkCampgroundOwnership, upload.single('image'), function(req, res){
+	delete req.body.campground.rating;
+	
 	Campground.findById(req.params.id, async function(err, campground) {
 		if (err) {
 			req.flash("error", err.message);
@@ -190,14 +197,17 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function(req, res) {
 			return res.redirect("back");
 		} 
 		try {
-			await cloudinary.v2.uploader.destroy(campground.imageId);	
-			//campground is a query object, which has deleteOne() method
-			campground.deleteOne();
+			await Promise.all([
+				cloudinary.v2.uploader.destroy(campground.imageId),
+				Comment.remove({"_id": {$in: campground.comments}}),
+				Review.remove({"_id": {$in: campground.reviews}})
+			])
+			await campground.remove();
 			req.flash("success","Site Deleted!");
 			res.redirect("/campgrounds");
 		} catch(err) {
 			req.flash("error", err.message);
-			return res.redirect("back");
+			return res.redirect("/campgrounds");
 		}
 	})
 });

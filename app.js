@@ -14,10 +14,10 @@ var User = require("./models/user");
 var seedDB = require("./seeds");
 
 //requiring routes
-var indexRoutes = require("./routes/index"),
-	campgroundRoutes = require("./routes/campgrounds"),
-	commentRoutes = require("./routes/comments");
-
+var commentRoutes    = require("./routes/comments"),
+    reviewRoutes     = require("./routes/reviews"),
+    campgroundRoutes = require("./routes/campgrounds"),
+    indexRoutes      = require("./routes/index")
 //Make use of environment variable to set the database, either dev (local db) or production (cloud db)
 var url = process.env.DATABASEURL || "mongodb://localhost/yelp_camp";
 mongoose.connect(url, {
@@ -64,6 +64,7 @@ app.use(function(req, res, next) {
 app.use(indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
+app.use("/campgrounds/:id/reviews", reviewRoutes);
 
 const port = process.env.PORT || 3000;
 app.listen(port, function() {

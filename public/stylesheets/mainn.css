@@ -71,3 +71,11 @@ body {
   border-bottom-right-radius: .25rem;
   border-bottom-left-radius: .25rem;
 }
+
+.checked {
+    color: orange;
+}
+
+.text-toggle {
+	display: none;
+}
