@@ -10,6 +10,19 @@
 	display: inline;
 }
 
+/* Used for toggling review/comment cards */
+.toggle-card {
+	border-left: 5px solid;
+}
+
+.toggle-card-new {
+	border-left-color: #00C851;
+}
+
+.toggle-card-edit {
+	border-left-color: #ffbb33;
+}
+
 #map {
 	height: 400px;
 	width: 100%;
@@ -67,8 +80,7 @@
 
 .rate:not(:checked) > input {
     position:absolute;
-    top:-9999px;
-  
+	visibility: hidden;
 }
 .rate:not(:checked) > label {
     float:right;
@@ -96,3 +108,4 @@
 .rate > label:hover ~ input:checked ~ label {
     color: #c59b08;
 }
+

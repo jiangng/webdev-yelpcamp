@@ -94,7 +94,7 @@ router.put("/:review_id", middleware.checkReviewOwnership, function (req, res) {
             //save changes
             campground.save();
             req.flash("success", "Your review was successfully edited.");
-            res.redirect('/campgrounds/' + campground._id);
+            res.redirect("back");
         });
     });
 });
@@ -116,7 +116,7 @@ router.delete("/:review_id", middleware.checkReviewOwnership, function (req, res
             //save changes
             campground.save();
             req.flash("success", "Your review was deleted successfully.");
-            res.redirect("/campgrounds/" + req.params.id);
+            res.redirect("back");
         });
     });
 });
