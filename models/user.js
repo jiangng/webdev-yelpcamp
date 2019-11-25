@@ -14,7 +14,13 @@ var UserSchema = new mongoose.Schema({
 	isAdmin: {
 		type: Boolean,
 		default: false
-	}
+	},
+	notifications: [
+		{
+		   type: mongoose.Schema.Types.ObjectId,
+		   ref: 'Notification'
+		}
+    ],
 });
 
 //Give functionalities like User.register() to User model

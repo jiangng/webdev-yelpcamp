@@ -3,10 +3,12 @@ var router = express.Router();
 var passport = require("passport");
 var User = require("../models/user");
 var Campground = require("../models/campground")
+var Notification = require("../models/notification")
 var async = require("async");
 var nodemailer = require("nodemailer");
 var crypto = require("crypto");
 var emailAddress = "jiang.ng7@gmail.com";
+var middleware = require("../middleware");
 
 //root route
 router.get("/", function(req, res) {
@@ -230,6 +232,34 @@ router.get("/users/:id", function(req, res) {
 		// 	res.render("users/show", {user: foundUser, campgrounds: campgrounds});
 		// });
 	});
+});
+
+// view all notifications
+router.get('/notifications', middleware.isLoggedIn, async function(req, res) {
+	try {
+		let user = await User.findById(req.user._id).populate({
+			path: 'notifications',
+			options: { sort: { "_id": -1 } }
+		}).exec();
+		let allNotifications = user.notifications;
+		res.render('notifications/index', { allNotifications });
+	} catch(err) {
+		req.flash('error', err.message);
+		res.redirect('back');
+	}
+});
+
+// handle notification
+router.get('/notifications/:id', middleware.isLoggedIn, async function(req, res) {
+	try {
+		let notification = await Notification.findById(req.params.id);
+		notification.isRead = true;
+		notification.save();
+		res.redirect(`/campgrounds/${notification.campgroundId}`);
+	} catch(err) {
+		req.flash('error', err.message);
+		res.redirect('back');
+	}
 });
 
 module.exports = router;

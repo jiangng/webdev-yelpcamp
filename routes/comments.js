@@ -3,6 +3,8 @@ var express = require("express");
 var router = express.Router({mergeParams: true});
 var Campground = require("../models/campground");
 var Comment = require("../models/comment");
+var Notification = require("../models/notification");
+var User = require("../models/user");
 var middleware = require("../middleware");
 
 //================
@@ -19,31 +21,42 @@ router.get("/new", middleware.isLoggedIn, function(req, res) {
 	});
 });
 
-router.post("/", middleware.isLoggedIn, function(req, res) {
-	//lookup Campground using id
-	Campground.findById(req.params.id, function(err, campground) {
-		if (err) {
-			console.log(err);
-			res.redirect("/campgrounds");
-		} else {
-			Comment.create(req.body.comment, function(err, comment) {
-				if (err) {
-					req.flash("error", "Something went wrong.");
-					console.log(err);
-				} else {
-					//add username and id to comment
-					comment.author.id = req.user._id;
-					comment.author.username = req.user.username;
-					//save comment
-					comment.save();
-					campground.comments.push(comment);
-					campground.save();
-					req.flash("success", "Succcessfully added comment.");
-					res.redirect('/campgrounds/' + campground._id);
-				}
-			});
-		}
-	});
+router.post("/", middleware.isLoggedIn, async function(req, res) {
+	try {
+		let [campground, newComment] = await Promise.all([
+			Campground.findById(req.params.id),
+			Comment.create(req.body.comment)
+		]);
+		
+		//add username and id to comment
+		newComment.author.id = req.user._id;
+		newComment.author.username = req.user.username;
+		campground.comments.push(newComment);
+		
+		//Create a notification and push it to the campground author
+		let [newNotification, campgroundAuthor] = await Promise.all([
+			Notification.create({
+				username: req.user.username,
+				campgroundId: campground.id,
+				campgroundName: campground.name,
+				info: "wrote a comment"
+			}),
+			User.findById(campground.author.id)
+		]);
+		campgroundAuthor.notifications.push(newNotification);
+	
+		await Promise.all([
+			newComment.save(),
+			campground.save(),
+			campgroundAuthor.save()
+		]);
+		
+		req.flash("success", "Succcessfully added comment.");
+		res.redirect('/campgrounds/' + campground._id);
+	} catch (err) {
+		req.flash('error', err.message);
+    	res.redirect('back');
+	}	
 });
 
 //COMMENT EDIT route
