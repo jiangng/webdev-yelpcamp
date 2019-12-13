@@ -9,63 +9,62 @@
 		<link rel="stylesheet" type="text/css" href="/stylesheets/mainn.css">
 	</head>
 	<body>
-		
-		
-	<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
-	  <a class="navbar-brand" href="/">YelpCamp</a>
-	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-		<span class="navbar-toggler-icon"></span>
-	  </button>
-	  <div class="collapse navbar-collapse" id="navbarCollapse">
-		<ul class="navbar-nav mr-auto">
-			<li class="nav-item <%= typeof page !== 'undefined' && page === 'campgrounds' ? 'active' : '' %>">
-				<a class="nav-link" href="/campgrounds">Home</a>
-			</li>
-		</ul>  
-		<ul class="navbar-nav navbar-right">
-		  <% if(!currentUser){ %>
-			<li class="nav-item <%= typeof page !== 'undefined' && page === 'login' ? 'active' : '' %>">
-			  <a class="nav-link" href="/login">Login</a>
-			</li>
-			<li class="nav-item <%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>">
-			  <a class="nav-link" href="/register">Sign Up</a>
-			</li>
-		  <% } else { %>
-			<li class="nav-item dropdown">
-				<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Notifications <span class="badge"><%= notifications.length %></span></a>
-				<div class="dropdown-menu" aria-labelledby="dropdown03">
-					<a class="dropdown-item" href="/notifications">View past notifications</a>
-					<% notifications.forEach(function(notification) { %>                          
-						<a class="dropdown-item" href="/notifications/<%= notification.id %>">
-							<em><%= notification.username %></em> <%= notification.info %> for <%= notification.campgroundName %>
-						</a>
-					<% }); %>
-				</div>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link" href="#">Signed in as <%= currentUser.username %></a>
-			</li>
-			<li class="nav-item">
-			  <a class="nav-link" href="/logout">Logout</a>
-			</li>
-		  <% } %>
-		</ul>	  
-	  </div>
-	</nav>
+		<div id="page-container">
+			<nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+			  <a class="navbar-brand" href="/">YelpCamp</a>
+			  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			  </button>
+			  <div class="collapse navbar-collapse" id="navbarCollapse">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item <%= typeof page !== 'undefined' && page === 'campgrounds' ? 'active' : '' %>">
+						<a class="nav-link" href="/campgrounds">Home</a>
+					</li>
+				</ul>  
+				<ul class="navbar-nav navbar-right">
+				  <% if(!currentUser){ %>
+					<li class="nav-item <%= typeof page !== 'undefined' && page === 'login' ? 'active' : '' %>">
+					  <a class="nav-link" href="/login">Login</a>
+					</li>
+					<li class="nav-item <%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>">
+					  <a class="nav-link" href="/register">Sign Up</a>
+					</li>
+				  <% } else { %>
+					<li class="nav-item dropdown">
+						<a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Notifications <span class="badge"><%= notifications.length %></span></a>
+						<div class="dropdown-menu" aria-labelledby="dropdown03">
+							<a class="dropdown-item" href="/notifications">View past notifications</a>
+							<% notifications.forEach(function(notification) { %>                          
+								<a class="dropdown-item" href="/notifications/<%= notification.id %>">
+									<em><%= notification.username %></em> <%= notification.info %> for <%= notification.campgroundName %>
+								</a>
+							<% }); %>
+						</div>
+					</li>
+					<li class="nav-item">
+					  <a class="nav-link" href="#">Signed in as <%= currentUser.username %></a>
+					</li>
+					<li class="nav-item">
+					  <a class="nav-link" href="/logout">Logout</a>
+					</li>
+				  <% } %>
+				</ul>	  
+			  </div>
+			</nav>
 
-	<div class="container">
-		<% if (success && success.length > 0) { %>
-			<div class="alert alert-success" role="alert">
-				<%= success %>
+			<div class="container">
+				<% if (success && success.length > 0) { %>
+					<div class="alert alert-success" role="alert">
+						<%= success %>
+					</div>
+				<% } %>
+				<% if (error && error.length > 0) { %>
+					<div class="alert alert-danger" role="alert">
+						<%= error %>
+					</div>
+				<% } %>
 			</div>
-		<% } %>
-		<% if (error && error.length > 0) { %>
-			<div class="alert alert-danger" role="alert">
-				<%= error %>
-			</div>
-		<% } %>
-	</div>
-	<div class="container">
+			<div class="container" id="content-wrap">
 				
 		
 	
