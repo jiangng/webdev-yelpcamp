@@ -199,10 +199,10 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function(req, res) {
 		try {
 			await Promise.all([
 				cloudinary.v2.uploader.destroy(campground.imageId),
-				Comment.remove({"_id": {$in: campground.comments}}),
-				Review.remove({"_id": {$in: campground.reviews}})
+				Comment.deleteOne({"_id": {$in: campground.comments}}),
+				Review.deleteOne({"_id": {$in: campground.reviews}})
 			])
-			await campground.remove();
+			await campground.deleteOne();
 			req.flash("success","Site Deleted!");
 			res.redirect("/campgrounds");
 		} catch(err) {

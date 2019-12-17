@@ -21,11 +21,36 @@
 			</p>
 			<% if (currentUser && (campground.author.id.equals(currentUser._id) || currentUser.isAdmin)) { %>
 				<a class="btn btn-xs btn-warning" href="/campgrounds/<%= campground._id %>/edit">Edit</a>
-				<form class="delete-form" action="/campgrounds/<%= campground._id %>/?_method=DELETE" method="POST">
-					<button class="btn btn-xs btn-danger">
-						Delete
-					</button>
-				</form>
+				<!-- Button trigger modal -->
+				<button type="button" class="btn btn-xs btn-danger" data-toggle="modal" data-target="#delete-confirmation">
+					Delete
+				</button>
+				<!-- Modal -->
+				<div class="modal fade" id="delete-confirmation" tabindex="-1" role="dialog">
+					<div class="modal-dialog modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Are you sure to delete this?</h5>
+								<button type="button" class="close" data-dismiss="modal">
+									<span>&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<p>
+									Sad to see this beautiful creature go, but new things won't come unless old things go!
+								</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+								<form action="/campgrounds/<%= campground._id %>/?_method=DELETE" method="POST">
+									<button class="btn btn-danger">
+										Delete
+									</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
 			<% } %>
 		  </div>
 		</div>

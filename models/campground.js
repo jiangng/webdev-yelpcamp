@@ -41,17 +41,5 @@ var campgroundSchema = new mongoose.Schema({
 });
 
 const Comment = require('./comment');
-//Called before campground.remove() is called in the DELETE route
-campgroundSchema.pre('deleteOne', async function() {
-	try {
-		await Comment.remove({
-			_id: {
-				$in: this.comments
-			}
-		});
-	} catch(err) {
-		console.log(err);
-	}
-});
 
 module.exports = mongoose.model("Campground", campgroundSchema);
