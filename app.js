@@ -42,8 +42,10 @@ app.set("view engine", "ejs");
 app.locals.moment = require('moment');
 
 //PASSPORT (and redis) CONFIGURATION
-var client  = redis.createClient();
-var store = new RedisStore({host: 'localhost', port: 6379, client: client, ttl: 260});
+//Note that REDIS_URL is None in localhost; only valid on heroku
+var client  = redis.createClient(process.env.REDIS_URL); 
+// var store = new RedisStore({host: 'localhost', port: 6379, client: client, ttl: 260});
+var store = new RedisStore({client: client});
 app.use(session({
 	secret: "Yokata",
 	store: store,
