@@ -107,45 +107,51 @@
 						<div class="collapse mt-3" id="collapseReviewNew">
 							<div class="card toggle-card toggle-card-new">
 								<div class="card-body">
-									<h4 class="card-title">
-										Write a New Review
-									</h4>
-									<form id="new-review-form" action="/campgrounds/<%= campground._id %>/reviews" method="POST">
-										<div class="form-group">
-											<input class="form-control" type="text" disabled value="<%= currentUser.username %>">
-										</div>
-										<div class="form-group">
-											<label class="d-none" for="rating">Write a New Review</label>
-											<fieldset id="rating" class="form-group rate">
-												<input type="radio" id="first-rate5" name="review[rating]" value="5" checked />
-												<label for="first-rate5" title="5 stars - Amazing">
-													5 stars
-												</label>
-												<input type="radio" id="first-rate4" name="review[rating]" value="4" />
-												<label for="first-rate4" title="4 stars - Very good">
-													4 stars
-												</label>
-												<input type="radio" id="first-rate3" name="review[rating]" value="3" />
-												<label for="first-rate3" title="3 stars - Average">
-													3 stars
-												</label>
-												<input type="radio" id="first-rate2" name="review[rating]" value="2" />
-												<label for="first-rate2" title="2 stars - Not good">
-													2 stars
-												</label>
-												<input type="radio" id="first-rate1" name="review[rating]" value="1" />
-												<label for="first-rate1" title="1 star - Terrible">
-													1 stars
-												</label>
-											</fieldset>
-										</div>
-										<div class="form-group">
-											<textarea class="form-control" name="review[text]" placeholder="Write your review..." form="new-review-form" rows="5"></textarea>
-										</div>
-										<div class="form-group">
-											<button class="btn btn-primary">Submit a Review</button>
-										</div>
-									</form>
+									<% if (!currentUser) { %>
+										<h5 class="card-title">
+											You need to login before you can review. <a href="/login">Click here</a> to go to the login page.
+										</h5>
+									<% } else { %>
+										<h4 class="card-title">
+											Write a New Review
+										</h4>
+										<form id="new-review-form" action="/campgrounds/<%= campground._id %>/reviews" method="POST">
+											<div class="form-group">
+												<input class="form-control" type="text" disabled value="<%= currentUser.username %>">
+											</div>
+											<div class="form-group">
+												<label class="d-none" for="rating">Write a New Review</label>
+												<fieldset id="rating" class="form-group rate">
+													<input type="radio" id="first-rate5" name="review[rating]" value="5" checked />
+													<label for="first-rate5" title="5 stars - Amazing">
+														5 stars
+													</label>
+													<input type="radio" id="first-rate4" name="review[rating]" value="4" />
+													<label for="first-rate4" title="4 stars - Very good">
+														4 stars
+													</label>
+													<input type="radio" id="first-rate3" name="review[rating]" value="3" />
+													<label for="first-rate3" title="3 stars - Average">
+														3 stars
+													</label>
+													<input type="radio" id="first-rate2" name="review[rating]" value="2" />
+													<label for="first-rate2" title="2 stars - Not good">
+														2 stars
+													</label>
+													<input type="radio" id="first-rate1" name="review[rating]" value="1" />
+													<label for="first-rate1" title="1 star - Terrible">
+														1 stars
+													</label>
+												</fieldset>
+											</div>
+											<div class="form-group">
+												<textarea class="form-control" name="review[text]" placeholder="Write your review..." form="new-review-form" rows="5"></textarea>
+											</div>
+											<div class="form-group">
+												<button class="btn btn-primary">Submit a Review</button>
+											</div>
+										</form>
+									<% } %>
 								</div>
 							</div>
 						</div>

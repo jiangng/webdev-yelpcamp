@@ -41,7 +41,7 @@ var geocoder = NodeGeocoder(options);
 //==================
 
 //Index route: Shows all campgrounds
-router.get("/", function(req, res) {
+router.get("/", middleware.saveCurrentUrl, function(req, res) {
 	var filter = {};
 	var searchTerm = "";
 	
@@ -106,12 +106,12 @@ router.post("/", middleware.isLoggedIn, upload.single('image'), async function(r
 });
 
 //New route: shows form to create new item
-router.get("/new", middleware.isLoggedIn, function(req, res) {
+router.get("/new", middleware.saveCurrentUrl, middleware.isLoggedIn, function(req, res) {
 	res.render("campgrounds/new");
 });
 
 //SHOW route
-router.get("/:id", function(req, res) {
+router.get("/:id", middleware.saveCurrentUrl, function(req, res) {
 	//find the campground with provided id
 	Campground.findById(req.params.id).populate("comments").populate({
 		path: "reviews",
@@ -121,9 +121,12 @@ router.get("/:id", function(req, res) {
 		if (err || !foundCampground) {
 			console.log(err);
 		} else {
-			res.render("campgrounds/show", {campground: foundCampground});
+			res.render("campgrounds/show", {campground: foundCampground, });
 		}
 	});
+	
+	// //save the url of the current page so can redirect back after users login
+	// req.session.current_url = req.originalUrl;
 });
 
 //EDIT route

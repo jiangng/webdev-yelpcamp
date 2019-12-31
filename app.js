@@ -12,6 +12,9 @@ var Campground = require("./models/campground");
 var Comment = require("./models/comment");
 var User = require("./models/user");
 var seedDB = require("./seeds");
+var session = require('express-session');
+var redis = require('redis');
+var RedisStore = require('connect-redis')(session);
 
 //requiring routes
 var commentRoutes    = require("./routes/comments"),
@@ -38,9 +41,12 @@ app.set("view engine", "ejs");
 
 app.locals.moment = require('moment');
 
-//PASSPORT CONFIGURATION
-app.use(require("express-session")({
+//PASSPORT (and redis) CONFIGURATION
+var client  = redis.createClient();
+var store = new RedisStore({host: 'localhost', port: 6379, client: client, ttl: 260});
+app.use(session({
 	secret: "Yokata",
+	store: store,
 	resave: false,
 	saveUninitialized: false
 }));

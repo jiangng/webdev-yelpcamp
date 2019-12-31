@@ -9,7 +9,7 @@ var Review = require("../models/review");
 var middleware = require("../middleware");
 
 // Reviews Index
-router.get("/", function (req, res) {
+router.get("/", middleware.saveCurrentUrl, function (req, res) {
 	//populate() finds the real objects to replace the ObjectIDs in Campground obj
     Campground.findById(req.params.id).populate({
         path: "reviews",

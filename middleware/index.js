@@ -109,4 +109,13 @@ middlewareObj.isLoggedIn = function(req, res, next) {
 	res.redirect("/login");
 };
 
+/*
+Use this when login is a possible action in the page of the current route
+*/
+middlewareObj.saveCurrentUrl = (req, res, next) => {
+	//save the url of the current page so can redirect back after users login
+	req.session.current_url = req.originalUrl;
+	next();
+}
+
 module.exports = middlewareObj;
