@@ -1,0 +1,3 @@
+Create a new terminal window and type redis-server
+Create another terminal window and type cd MongodDB, ./mongod
+Type nodemon in Terminal 

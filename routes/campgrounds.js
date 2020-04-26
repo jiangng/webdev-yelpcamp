@@ -4,6 +4,7 @@ var Campground = require("../models/campground");
 var Comment = require("../models/comment");
 var Review = require("../models/review");
 var middleware = require("../middleware");
+var utils = require("../utilities");
 var NodeGeocoder = require('node-geocoder');
 var multer = require('multer');
 var storage = multer.diskStorage({
@@ -46,27 +47,20 @@ router.get("/", middleware.saveCurrentUrl, function(req, res) {
 	var searchTerm = "";
 	
 	//Check if the search bar is used
-    if(req.query.search) {
-        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+	searchTerm = req.query.search;
+    if(searchTerm) {
+        const regex = new RegExp(utils.escapeRegex(searchTerm), 'gi');
 		filter = {name: regex};
-		searchTerm = req.query.search;
     }
 	
-	Campground.find(filter, function(err, allCampgrounds){
+	Campground.find(filter, function(err, campgrounds){
 	   if(err){
 		   console.log(err);
 	   } else {
-		  res.render("campgrounds/index",{campgrounds:allCampgrounds, searchTerm: searchTerm, page: "campgrounds"});
+		  res.render("campgrounds/index",{campgrounds, searchTerm, page: "campgrounds"});
 	   }
 	});
-	
-	//req.user contains logged-in user's info
-	//console.log(req.user)
 });
-
-function escapeRegex(text) {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-};
 
 //Create route
 //Note: upload.single('image') refers to name="image" in campgrounds/new.ejs
@@ -116,31 +110,26 @@ router.get("/:id", middleware.saveCurrentUrl, function(req, res) {
 	Campground.findById(req.params.id).populate("comments").populate({
 		path: "reviews",
 		options: {sort: {createdAt: -1}}
-	}).exec(function(err, foundCampground) {
+	}).exec(function(err, campground) {
 		//If an ID is technically valid but has no associated campground, there's no err hence need to check if foundCampground is defined or not 
-		if (err || !foundCampground) {
+		if (err || !campground) {
 			console.log(err);
 		} else {
-			res.render("campgrounds/show", {campground: foundCampground, });
+			res.render("campgrounds/show", {campground});
 		}
 	});
-	
-	// //save the url of the current page so can redirect back after users login
-	// req.session.current_url = req.originalUrl;
 });
 
 //EDIT route
 router.get("/:id/edit", middleware.checkCampgroundOwnership, function(req, res) {
-	Campground.findById(req.params.id, function(err, foundCampground) {
+	Campground.findById(req.params.id, function(err, campground) {
 		//not handling err here cuz middleware already did it
-		res.render("campgrounds/edit", {campground: foundCampground});
+		res.render("campgrounds/edit", {campground});
 	});
 });
 
 // UPDATE CAMPGROUND ROUTE
 router.put("/:id", middleware.checkCampgroundOwnership, upload.single('image'), function(req, res){
-	delete req.body.campground.rating;
-	
 	Campground.findById(req.params.id, async function(err, campground) {
 		if (err) {
 			req.flash("error", err.message);
@@ -202,15 +191,15 @@ router.delete("/:id", middleware.checkCampgroundOwnership, function(req, res) {
 		try {
 			await Promise.all([
 				cloudinary.v2.uploader.destroy(campground.imageId),
-				Comment.deleteOne({"_id": {$in: campground.comments}}),
-				Review.deleteOne({"_id": {$in: campground.reviews}})
+				Comment.deleteMany({"_id": {$in: campground.comments}}),
+				Review.deleteMany({"_id": {$in: campground.reviews}})
 			])
 			await campground.deleteOne();
 			req.flash("success","Site Deleted!");
-			res.redirect("/campgrounds");
 		} catch(err) {
 			req.flash("error", err.message);
-			return res.redirect("/campgrounds");
+		} finally {
+			res.redirect("/campgrounds");
 		}
 	})
 });

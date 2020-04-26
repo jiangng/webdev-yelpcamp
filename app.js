@@ -27,11 +27,7 @@ mongoose.connect(url, {
 	useNewUrlParser: true,
 	useCreateIndex: true
 });
-//mongoose.connect("mongodb://localhost/yelp_camp", {useNewUrlParser: true});
-// mongoose.connect('mongodb+srv://jiang:7xr6HHjLLpN-ZEG@cluster0-3bmps.mongodb.net/test?retryWrites=true&w=majority', {
-// 	useNewUrlParser: true, 
-// 	useCreateIndex: true
-// });
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.use(methodOverride("_method"));
@@ -44,7 +40,6 @@ app.locals.moment = require('moment');
 //PASSPORT (and redis) CONFIGURATION
 //Note that REDIS_URL is None in localhost; only valid on heroku
 var client  = redis.createClient(process.env.REDIS_URL); 
-// var store = new RedisStore({host: 'localhost', port: 6379, client: client, ttl: 260});
 var store = new RedisStore({client: client});
 app.use(session({
 	secret: "Yokata",
